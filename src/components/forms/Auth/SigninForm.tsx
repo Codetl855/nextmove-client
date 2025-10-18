@@ -8,21 +8,14 @@ import SecondaryButton from "../../ui/Buttons/extensions/SecondaryButton";
 import SocialLoginIcons from "../../ui/Social/SocialLoginIcons";
 import { Divider } from "../../ui/Divider/Divider";
 import { RadioGroup } from "../../ui/Inputs/extensions/RadioGroup";
-import { LOGIN_TYPES, LoginType } from "../../../constants/auth";
+import { LOGIN_TYPES } from "../../../constants/auth";
+import { SigninFormData } from "../../../validation/auth/signinSchema";
 
 import googleIcon from "../../../assets/img/google.png";
 import appleIcon from "../../../assets/img/apple.png";
 import facebookIcon from "../../../assets/img/facebook.png";
 import instagramIcon from "../../../assets/img/instagram.png";
 import linkedinIcon from "../../../assets/img/linkedin.png";
-
-export type SigninFormData = {
-  loginType: LoginType;
-  email: string;
-  mobile: string;
-  password: string;
-  rememberMe: boolean;
-};
 
 type SigninFormProps = {
   formData: SigninFormData;
@@ -116,7 +109,7 @@ const SigninForm: React.FC<SigninFormProps> = ({
       </div>
 
       <PrimaryButton type="submit" disabled={isSubmitting} >
-        {isSubmitting ? 'Logging in...' : 'Login'}
+        {isSubmitting ? 'Loggingin...' : 'Login'}
       </PrimaryButton>
 
       <div className="">
