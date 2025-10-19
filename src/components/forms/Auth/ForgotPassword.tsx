@@ -33,7 +33,7 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
     };
 
     return (
-        <form onSubmit={onSubmit}>
+        <form onSubmit={onSubmit} className="w-full">
             <RadioGroup
                 name="loginType"
                 value={formData.loginType}
@@ -57,7 +57,7 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
                     placeholder="email@example.com"
                     leftIcon={<span className="icon-[ic--baseline-email] w-4 h-4" />}
                     error={errors.email}
-                    className="mb-2"
+                    className="mb-2 w-full"
                 />
             )}
 
@@ -72,7 +72,7 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
                     placeholder="92 305 343443"
                     leftIcon={<span className="icon-[ic--round-call] w-4 h-4" />}
                     error={errors.mobile}
-                    className="mb-2"
+                    className="mb-2 w-full"
                 />
             )}
 

@@ -10,7 +10,8 @@ export type SignupPayload = {
 }
 
 export type LoginPayload = {
-    email: string;
+    email?: string;
+    phone?: string;
     password: string;
 }
 
