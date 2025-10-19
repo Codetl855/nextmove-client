@@ -1,6 +1,7 @@
 import React from 'react'
 interface OptionsGridProps {
     options: string[];
+    selected:string[]
     onSelect?: (value: string) => void;
 }
 const OptionsGrid = ({options, onSelect}: OptionsGridProps) => {

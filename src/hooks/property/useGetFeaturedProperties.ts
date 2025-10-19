@@ -12,6 +12,8 @@ export const useGetFeaturedProperties = (propertyType: string = "House") => {
     setLoading(true);
     setErrors(null);
 
+    console.log("Fetching featured properties of type:", type);
+
     try {
       const res = await getFeaturedProperties(type);
       setProperties(res?.data?.data || []);

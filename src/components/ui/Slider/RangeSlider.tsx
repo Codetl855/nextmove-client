@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Range } from "react-range";
 
 interface RangeSliderProps {
@@ -7,17 +7,32 @@ interface RangeSliderProps {
     max: number;
     unit?: string;
     unitPosition?: "prefix" | "suffix";
+    value?: number[]; // ✅ add this line
     onChange?: (values: number[]) => void;
 }
 
-const RangeSlider = ({ label, min, max, unit, unitPosition = "prefix", onChange }: RangeSliderProps) => {
-    // default to min & max range
-    const [values, setValues] = useState<number[]>([min, max]);
+const RangeSlider = ({
+    label,
+    min,
+    max,
+    unit,
+    unitPosition = "prefix",
+    value,
+    onChange,
+}: RangeSliderProps) => {
+    // If `value` is passed from parent, use it; otherwise default to [min, max]
+    const [values, setValues] = useState<number[]>(value ?? [min, max]);
+
+    // When parent value changes, sync it locally
+    useEffect(() => {
+        if (value) setValues(value);
+    }, [value]);
 
     const handleChange = (vals: number[]) => {
         setValues(vals);
         onChange?.(vals);
     };
+
     const formatValue = (val: number) => {
         if (!unit) return val.toLocaleString();
         return unitPosition === "prefix"
@@ -34,6 +49,7 @@ const RangeSlider = ({ label, min, max, unit, unitPosition = "prefix", onChange 
                     {`${formatValue(values[0])} - ${formatValue(values[1])}`}
                 </span>
             </div>
+
             {/* Range track */}
             <Range
                 step={1000}
@@ -56,13 +72,13 @@ const RangeSlider = ({ label, min, max, unit, unitPosition = "prefix", onChange 
                 renderThumb={({ props }) => (
                     <div
                         {...props}
-                        className="w-4 h-4 bg-aztec border-2 border-aztec rounded-full shadow cursor-pointer focus:outline-none focus:ring-3 focus:ring-white "
+                        className="w-4 h-4 bg-aztec border-2 border-aztec rounded-full shadow cursor-pointer focus:outline-none focus:ring-3 focus:ring-white"
                     />
                 )}
             />
 
             {/* Min & Max labels */}
-            <div className="flex justify-between text-sm ">
+            <div className="flex justify-between text-sm">
                 <span className="bg-white px-2 py-1 rounded">
                     {values[0].toLocaleString()}
                 </span>
@@ -75,6 +91,3 @@ const RangeSlider = ({ label, min, max, unit, unitPosition = "prefix", onChange 
 };
 
 export default RangeSlider;
-
-
-
