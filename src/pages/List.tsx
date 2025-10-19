@@ -7,8 +7,11 @@ import HouseCard from '../components/list/HouseCard'
 import house from "../assets/img/house.png"
 import BlogSection from '../components/home/BlogSection'
 import Pagination from '../components/tables/Pagination'
+import useSearch from '@/hooks/search/useSearch'
 
 const List = () => {
+      const { searchFilters, setSearchFilters, reset, apply } = useSearch()
+console.log(searchFilters);
     const [number, setNumber] = useState("Sort By")
     const [layout, setLayout] = useState("grid")
     const numbers = [1, 2, 3, 4, 5]

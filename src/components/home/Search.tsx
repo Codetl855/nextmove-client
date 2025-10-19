@@ -3,20 +3,16 @@ import PrimaryButton from "@/components/ui/Buttons/extensions/PrimaryButton";
 import TextButton from "@/components/ui/Buttons/extensions/TextButton";
 import AdvancedPopup from "@/components/home/advancedPopup/AdvancedPopup";
 import CustomSelect from "@/components/ui/Dropdowns/CustomSelect";
+import useSearch from "@/hooks/search/useSearch";
+import { useNavigate } from "react-router-dom";
 
 function Search() {
   const [isOpen, setIsOpen] = useState(false);
 
-  // 🧠 Unified search filter state
-  const [searchFilters, setSearchFilters] = useState({
-    type: "All",
-    location: "",
-    keyword: "",
-    tab: "resedentials",
-    selectedOptions: [] as string[],
-    priceRange: [5000, 650000] as [number, number],
-    sizeRange: [100, 650000] as [number, number],
-  });
+  const navigate = useNavigate()
+
+  // use shared search context
+  const { searchFilters, setSearchFilters, reset, apply } = useSearch();
 
   // Generic change handler (works for any key)
   const handleFilterChange = (key: string, value: any) => {
@@ -24,20 +20,12 @@ function Search() {
   };
 
   const handleApply = () => {
-    console.log("✅ Applied filters:", searchFilters);
+    apply();
     setIsOpen(false);
   };
 
   const handleReset = () => {
-    setSearchFilters({
-      type: "All",
-      location: "",
-      keyword: "",
-      tab: "resedentials",
-      selectedOptions: [],
-      priceRange: [5000, 650000],
-      sizeRange: [100, 650000],
-    });
+    reset();
   };
 
   return (
@@ -117,7 +105,7 @@ function Search() {
 
             <button
               className="bg-aztec w-full md:w-[164px] justify-center items-center h-[48px] flex text-white px-6 font-[18px] rounded-lg"
-              onClick={() => console.log("🔍 Searching with:", searchFilters)}
+              onClick={() => navigate('/list')}
             >
               <span className="icon-[iconamoon--search-thin] mr-1 text-lg text-white"></span>
               Search
