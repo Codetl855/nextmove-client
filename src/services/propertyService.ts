@@ -108,8 +108,8 @@ export const updateProperty = async (
     // ✅ Default handling for all other fields
     if (Array.isArray(value)) {
       value.forEach((v) => formData.append(`${key}[]`, String(v)));
-    } else if (value instanceof File) {
-      formData.append(key, value);
+    } else if (value && typeof value === 'object' && (value as any).constructor === File) {
+      formData.append(key, value as File);
     } else {
       formData.append(key, String(value));
     }
@@ -134,6 +134,27 @@ export const deleteProperty = async (id: number | string) => {
 export const getPropertyDetail = async (id: number | string) => {
   return request("get", API_ROUTES.PROPERTY.GET_PROPERTY(id));
 };
+
+export interface SearchPropertiesParams {
+  type?: string;
+  city?: string;
+  location?: string;
+  keyword?: string;
+  propertyType?: string;
+  duration?: string;
+  page?: number;
+  per_page?: number;
+  min_price?: number;
+  max_price?: number;
+  min_size?: number;
+  max_size?: number;
+  amenities?: string[];
+  rating?: number;
+}
+
+export const getPropertiesBySearch = async (params: SearchPropertiesParams) => {
+  return request('POST', 'v1/search-properties', JSON.stringify(params))
+}
 
 
 

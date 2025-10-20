@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import BreadCrumb from '../components/adminPanel/BreadCrumb/BreadCrumb'
 import CustomSelect from '../components/ui/Dropdowns/CustomSelect'
 import IconWrapper from '../components/ui/Icons/IconWrapper'
@@ -8,14 +8,70 @@ import house from "../assets/img/house.png"
 import BlogSection from '../components/home/BlogSection'
 import Pagination from '../components/tables/Pagination'
 import useSearch from '@/hooks/search/useSearch'
+import { getPropertiesBySearch } from '@/services/propertyService'
 
 const List = () => {
-      const { searchFilters, setSearchFilters, reset, apply } = useSearch()
-console.log(searchFilters);
+    const { searchFilters } = useSearch();
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const payload = {
+    type: searchFilters.type,
+    city: searchFilters.location,
+    location: searchFilters.location,
+    keyword: searchFilters.keyword,
+    propertyType: searchFilters.propertyType,
+    duration: searchFilters.duration,
+    page: 1,
+    per_page: 5,
+    min_price: searchFilters.priceRange?.[0] ?? 0,
+    max_price: searchFilters.priceRange?.[1] ?? 0,
+    min_size: searchFilters.sizeRange?.[0] ?? 0,
+    max_size: searchFilters.sizeRange?.[1] ?? 0,
+    amenities: searchFilters.amenities,
+    rating: searchFilters.rating,
+  };
+
+  const fetchData = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const res = await getPropertiesBySearch(payload);
+
+      if (res?.data) {
+        setData(res.data);
+      } else {
+        setData([]);
+      }
+
+    } catch (err) {
+      console.error("Error fetching properties:", err);
+      setError("Failed to load properties. Please try again later." as any);
+      setData([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [searchFilters]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      fetchData();
+    }, 300); // 300ms debounce
+
+    return () => clearTimeout(timeoutId);
+  }, [fetchData]);
+
+    console.log(payload)
     const [number, setNumber] = useState("Sort By")
     const [layout, setLayout] = useState("grid")
     const numbers = [1, 2, 3, 4, 5]
     const [currentPage, setCurrentPage] = useState(1);
+
+    if(loading){
+        return <div className="flex justify-center items-center h-64">Loading data ...</div>
+    }
     return (
         <>
             <div className=" bg-aztec-light pt-4 z-20 relative">
@@ -35,16 +91,16 @@ console.log(searchFilters);
                         </div>
                         <div className="flex gap-3 mt-3 sm:mt-0">
                             <IconWrapper
-                            label='Save Search'
-                            icon='icon-[iconoir--bookmark]'
-                            className='bg-white '
-                            iconClassName='text-xl'
+                                label='Save Search'
+                                icon='icon-[iconoir--bookmark]'
+                                className='bg-white '
+                                iconClassName='text-xl'
                             />
                             <CustomSelect
                                 value={number}
                                 onChange={setNumber}
                                 options={["Sort By", "Asc", "Des"]}
-                                className='border-white bg-white px-4 h-[48px]' 
+                                className='border-white bg-white px-4 h-[48px]'
                             />
                             <IconWrapper
                                 icon="icon-[line-md--grid-3]"
@@ -61,7 +117,9 @@ console.log(searchFilters);
 
                         </div>
                     </div>
-                    <p className="text-sm  mt-1">Showing 1–5 of 1,125 results</p>
+                    <p className="text-sm  mt-1">
+                        {loading ? 'Loading...' : `Showing ${data.length} results`}
+                    </p>
 
 
 
@@ -75,42 +133,46 @@ console.log(searchFilters);
                             ? "grid grid-cols-1 lg:grid-cols-2" // 2 cards side by side
                             : "grid grid-cols-1 space-y-4" // 1 per row in list
                             }`}>
-                            {numbers.map((item, idx) => (
+                            {data.length > 0 ? data.map((item: any, idx: number) => (
                                 <HouseCard
                                     key={idx}
                                     image={house}
                                     iconClass='icon-[ic--baseline-favorite]'
-                                    title="Duplex Orkit Villa."
+                                    title={item.title || "Property Title"}
                                     className='text-[#FF5555]'
-                                    address="59345 STONEWALL DR, Plaquemine, LA 70764, USA"
-                                    sqft="8000 sqft"
-                                    beds={4}
-                                    baths={4}
-                                    agent="Arlene McCoy"
-                                    price="$7250.00"
-                                    photosCount={8}
+                                    address={item.address || "Property Address"}
+                                    sqft={`${item.size || 0} sqft`}
+                                    beds={item.bedrooms || 0}
+                                    baths={item.bathrooms || 0}
+                                    agent={item.agent || "Agent Name"}
+                                    price={`$${item.price || 0}`}
+                                    photosCount={item.photosCount || 0}
                                     layout={layout}
                                 />
-                            ))}
+                            )) : (
+                                <div className="col-span-2 flex justify-center items-center h-64 text-gray-500">
+                                    {error ? error : "No properties found"}
+                                </div>
+                            )}
                         </div>
 
                     </div>
                     <div className="grid  md:grid-cols-3">
                         <div></div>
 
-                       <div className="md:col-span-2 flex justify-center md:justify-start" >
-                         <Pagination
-                            className=''
-                            currentPage={currentPage}
-                            totalPages={5}
-                            onPageChange={setCurrentPage}
-                            onlyButtons={true}
-                        />
-                       </div>
+                        <div className="md:col-span-2 flex justify-center md:justify-start" >
+                            <Pagination
+                                className=''
+                                currentPage={currentPage}
+                                totalPages={5}
+                                onPageChange={setCurrentPage}
+                                onlyButtons={true}
+                            />
+                        </div>
                     </div>
-             
+
                 </div>
-                   <div className="bg-white mt-4 md:mt-8">
+                <div className="bg-white mt-4 md:mt-8">
 
                     <BlogSection />
                 </div>

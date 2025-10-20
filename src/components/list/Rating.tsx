@@ -1,7 +1,12 @@
 import React from "react";
 import { Radio } from "../ui/Inputs/extensions/Radio";
 
-const Rating = () => {
+interface RatingProps {
+  rating: number;
+  onRatingChange: (rating: number) => void;
+}
+
+const Rating = ({ rating, onRatingChange }: RatingProps) => {
   return (
     <div className="mt-4 bg-aztec-light p-6 rounded-xl pt-4">
       <p className="font-medium text-sm mb-2">Rating</p>
@@ -12,7 +17,8 @@ const Rating = () => {
             name="rating"
             value={stars}
             className="w-3 h-3 bg-white ring-aztec   focus:ring-aztec ring-2 checked:bg-aztec border-white"
-            defaultChecked={stars === 5}
+            checked={rating === stars}
+            onChange={() => onRatingChange(stars)}
             label={
               <div className="flex">
                 {Array.from({ length: stars }).map((_, i) => (

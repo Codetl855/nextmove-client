@@ -8,6 +8,10 @@ export type SearchFilters = {
   selectedOptions: string[];
   priceRange: [number, number];
   sizeRange: [number, number];
+  amenities: string[];
+  rating: number;
+  duration: string;
+  propertyType: string;
 };
 
 const defaultFilters: SearchFilters = {
@@ -18,6 +22,10 @@ const defaultFilters: SearchFilters = {
   selectedOptions: [],
   priceRange: [5000, 650000],
   sizeRange: [100, 650000],
+  amenities: [],
+  rating: 0,
+  duration: "",
+  propertyType: "",
 };
 
 type SearchContextValue = {
